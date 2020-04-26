@@ -1,33 +1,19 @@
-
-
 #include <i2c_driver_wire.h>
-/* LED Blink, Teensyduino Tutorial #1
-   http://www.pjrc.com/teensy/tutorial.html
- 
-   This example code is in the public domain.
-*/
+
 #define SLAVE_ADDRESS 0x04
-const int ledPin = 13;
 
 void setup() {
-  // initialize the digital pin as an output.
-  pinMode(ledPin, OUTPUT);
+  
   Wire.begin(SLAVE_ADDRESS);
   Wire.onReceive(receiveData);
   Serial.begin(9600);
   Mouse.screenSize(1920, 1080);
 }
 
-// the loop() methor runs over and over again
-// as long as the board has power
-
-void loop() {
-  Serial.println("loop");
-  delay(10000);
-}
+void loop() {}
 
 void receiveData(int byteCount) {
-  int coords[2] = {0};
+  int coords[3] = {0};
   int pos = 0;
   String buf = "";
   while ( Wire.available()) {
@@ -40,10 +26,11 @@ void receiveData(int byteCount) {
       buf += c;
     }
   }
-  Serial.println();
-  String message = "Received data";
-  Serial.println(coords[0]);
-  Serial.println(coords[1]);
-  Mouse.moveTo(coords[0], coords[1]);
- 
+  if (coords[0] == 1) {
+    Serial.println("Received mouse move instruction.");
+    Mouse.moveTo(coords[0],coords[1]);
+  } else if (coords[0] == 2) {
+    Serial.println("Received click instruction.");
+    Mouse.set_buttons(coords[0], 0, coords[1]);
+  }
 }
