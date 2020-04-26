@@ -1,11 +1,7 @@
 import json
+import sys
+import subprocess
 
-board = [
-    ['c','n','t','s'],
-    ['d','a','t','i'],
-    ['o','o','m','e'],
-    ['s','i','k','n']
-]
 size = 4
 directions = [
     (-1, -1),
@@ -44,15 +40,30 @@ def depth_first_search(r, c, visited, trie, current_word, direction):
 # Problem 1: Turn board into graph
 # DFS
 if __name__ == '__main__':
+    # First get board
+    screenshot_command = "raspi2png"
+    preprocess_image_command = 'convert snapshot.png -crop 350x350+800+500 -fill white -fuzz 10% +opaque "#000000" processed.png'
+    ocr_command = "gocr -i processed.png"
+    subprocess.run(screenshot_command)
+    subprocess.run(preprocess_image_command.split(" "))
+    output = subprocess.run(ocr_command.split(" "), stdout=subprocess.PIPE)
+    res = output.stdout.decode("utf-8").replace('l','I').lower().rstrip()
+    # output.stdout.replace('l','I').lower()
+    print(res)
+    num_letters = len(res.replace(' ','',-1).replace('\n','',-1))
+    if num_letters != 16:
+        print('Error parsing!')
+        print(res)
+        exit()
+    board = [list(row) for row in res.replace(' ','',-1).split('\n')]
     trie_node = {}
     with open('dict_trie.json') as f:
         trie_node = json.load(f)
-    
-    
+     
     for row in board:
         for cell in row:
             print(cell, end=" ")
-        print()
+        print(len(row))
     for r in range(size):
         for c in range(size):
             start = board[r][c]
