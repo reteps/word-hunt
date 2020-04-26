@@ -44,7 +44,7 @@ def get_neighbors(r, c):
 
 
 def allPossibleWords(board, min_length, trie_dict):
-    combinations = []
+    combinations = {}
 
     def depth_first_search(r, c, visited, trie, current_word, direction):
         if (r, c) in visited:  # Cannot go to this cell again, so return
@@ -54,8 +54,7 @@ def allPossibleWords(board, min_length, trie_dict):
         if letter in trie:  # has subnode
             current_word += letter
             if trie[letter]['valid'] and len(current_word) >= min_length:
-                combinations.append(
-                    {'word': current_word, 'coords': direction})
+                combinations[current_word] = direction
             for n in get_neighbors(r, c):
                 new_r = n[0]
                 new_c = n[1]

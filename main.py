@@ -13,7 +13,7 @@ def screenshot_until_success(new_picture=True, location="processed.png"):
     preprocess_image_command = 'convert snapshot.png -crop 350x350+800+500 -fill white -fuzz 10% +opaque "#000000" processed.png'
     ocr_command = "gocr -i " + location
     if new_picture:
-        subprocess.run("raspi2png")
+        subprocess.run(["raspi2png"])
         subprocess.run(preprocess_image_command.split(" "))
     output = subprocess.run(ocr_command.split(" "), stdout=subprocess.PIPE)
     res = output.stdout.decode("utf-8").replace('l', 'I').lower().rstrip().replace(' ', '', -1).replace('\r','',-1)
@@ -24,7 +24,7 @@ def screenshot_until_success(new_picture=True, location="processed.png"):
         print('Error parsing... Retrying!')
         print(num_letters)
         time.sleep(1)
-        screenshot_until_success(new_picture, location)
+        return screenshot_until_success(new_picture, location)
     # Return board
     return [list(row) for row in res.split('\n')]
 
@@ -43,6 +43,8 @@ def click(on, adr=0x04):
 
 if __name__ == '__main__':
     board = []
+    if len(sys.argv) == 1:
+        sys.argv.append('!')
     if sys.argv[1] == 'test':
         board = screenshot_until_success(False)
     elif sys.argv[1] == 'windows':
@@ -70,7 +72,8 @@ if __name__ == '__main__':
     trie_node = {}
     with open('dict_trie.json') as f:
         trie_node = json.load(f)
-    
+    for row in board:
+        print(len(board))
     words = solver.allPossibleWords(board, 3, trie_node)
-    for word in words:
-        print('{:10} -> {}'.format(word['word'], word['coords']))
+    for word in sorted(words,key=len,reverse=True):
+        print('{:10} -> {}'.format(word, words[word]))

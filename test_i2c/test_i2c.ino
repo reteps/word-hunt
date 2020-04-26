@@ -3,7 +3,6 @@
 #define SLAVE_ADDRESS 0x04
 
 void setup() {
-  
   Wire.begin(SLAVE_ADDRESS);
   Wire.onReceive(receiveData);
   Serial.begin(9600);
