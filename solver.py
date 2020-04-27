@@ -43,7 +43,7 @@ def get_neighbors(r, c):
     return neighbors
 
 
-def allPossibleWords(board, min_length, trie_dict):
+def allPossibleWords(board, min_length, max_length, trie_dict):
     combinations = {}
 
     def depth_first_search(r, c, visited, trie, current_word, direction):
@@ -53,7 +53,7 @@ def allPossibleWords(board, min_length, trie_dict):
         visited.append((r, c))
         if letter in trie:  # has subnode
             current_word += letter
-            if trie[letter]['valid'] and len(current_word) >= min_length:
+            if trie[letter]['valid'] and len(current_word) >= min_length and len(current_word) <= max_length:
                 combinations[current_word] = direction
             for n in get_neighbors(r, c):
                 new_r = n[0]
