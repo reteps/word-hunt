@@ -79,5 +79,14 @@ if __name__ == '__main__':
     for row in board:
         print(len(board))
     words = solver.allPossibleWords(board, 3, trie_node)
+    max_scores = {3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9:0}
+    score_map = {3: 100,4: 400, 5: 800, 6: 1400, 7: 1700, 8:2000, 9:2000}
     for word in sorted(words,key=len):
+        max_scores[len(word)] += score_map[len(word)]
         print('{:10} -> {}'.format(word, words[word]))
+    total_max_score = 0
+    for length in max_scores:
+        if max_scores[length] != 0:
+            print('{} -> {}'.format(length, max_scores[length]))
+        total_max_score += max_scores[length]
+    print('T -> {}'.format(total_max_score))
