@@ -27,9 +27,9 @@ void receiveData(int byteCount) {
   }
   if (coords[0] == 1) {
     Serial.println("Received mouse move instruction.");
-    Mouse.moveTo(coords[0],coords[1]);
+    Mouse.moveTo(coords[1],coords[2]);
   } else if (coords[0] == 2) {
     Serial.println("Received click instruction.");
-    Mouse.set_buttons(coords[0], 0, coords[1]);
+    Mouse.set_buttons(coords[1], 0, coords[2]);
   }
 }
