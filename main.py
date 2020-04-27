@@ -16,8 +16,12 @@ def screenshot_until_success(new_picture=True, location="processed.png"):
         subprocess.run(["raspi2png"])
         subprocess.run(preprocess_image_command.split(" "))
     output = subprocess.run(ocr_command.split(" "), stdout=subprocess.PIPE)
-    res = output.stdout.decode("utf-8").replace('l', 'I').lower().rstrip().replace(' ', '', -1).replace('\r','',-1)
-    # output.stdout.replace('l','I').lower()
+    letter_map = {'0':'O','l':'I',' ':'','\r':''}
+    
+    res = output.stdout.decode("utf-8")
+    for replacement in letter_map:
+        res = res.replace(replacement, letter_map[replacement], -1)
+    res = res.lower().rstrip()
     print(res)
     num_letters = len(res.replace('\n', '', -1))
     if num_letters != 16:
@@ -75,5 +79,5 @@ if __name__ == '__main__':
     for row in board:
         print(len(board))
     words = solver.allPossibleWords(board, 3, trie_node)
-    for word in sorted(words,key=len,reverse=True):
+    for word in sorted(words,key=len):
         print('{:10} -> {}'.format(word, words[word]))
