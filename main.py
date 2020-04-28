@@ -52,9 +52,9 @@ def moveToOnBoard(newpos, currentx, currenty):
     diffx = (newpos[0] - currentx) * 44
     diffy = (newpos[1] - currenty) * 21
     print('New Word, deltaX: {}, deltaY: {}'.format(diffx, diffy))
-    if (abs(diffx) > 127):
-        move(math.copysign(127, diffx), 0)
-        diffx -= math.copysign(127, diffx)
+    if (abs(diffx) > 126):
+        move(math.copysign(126, diffx), 0)
+        diffx -= math.copysign(126, diffx)
         print('Now diffx is', diffx)
     if diffx != 0 and diffy != 0:
         move(diffx,diffy)
