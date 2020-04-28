@@ -39,7 +39,7 @@ def get_neighbors(r, c):
         new_c = c + d[1]
         if new_r >= SIZE or new_c >= SIZE or new_r < 0 or new_c < 0:
            continue
-        neighbors.append((new_r, new_c))
+        neighbors.append((new_r, new_c, d[0], d[1]))
     return neighbors
 
 
@@ -59,7 +59,7 @@ def allPossibleWords(board, min_length, max_length, trie_dict):
                 new_r = n[0]
                 new_c = n[1]
                 depth_first_search(
-                    new_r, new_c, visited[:], trie[letter], current_word, direction + [n])
+                    new_r, new_c, visited[:], trie[letter], current_word, direction + [(n[2], n[3])])
     for r in range(SIZE):
         for c in range(SIZE):
             start = board[r][c]
