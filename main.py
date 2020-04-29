@@ -52,33 +52,40 @@ def click(on, adr=0x04):
     packet = str.encode('C{}0000000#'.format(on))
     time.sleep(0.03)
     ser.write(packet)
-
-def correctMouseCoords(deltaPos):
+def correctMouseCoords(deltaPos, counter):
     if deltaPos in MOUSE_LOOKUP_TABLE:
         m = MOUSE_LOOKUP_TABLE[deltaPos]
-        return m[0], m[1]
-    x = deltaPos[0] * 55
+        return (m[0], m[1]), counter
+    x = deltaPos[0] * 54
+    if x != 0:
+        counter+=1
+    if counter > 50:
+        x += 1
+        counter -= 50
     y = deltaPos[1] * 26
-    return x, y
-def moveToOnBoard(newpos, currentx, currenty, speed):
+    return (x, y), counter
+def moveToOnBoard(newpos, currentx, currenty, speed,counter):
     deltaPos = (newpos[0] - currentx, newpos[1] - currenty)
-    diffx, diffy = correctMouseCoords(deltaPos)
+    diff,counter = correctMouseCoords(deltaPos,counter)
+    diffx = diff[0]
+    diffy = diff[1]
     # print('New Word, deltaX: {}, deltaY: {}'.format(diffx, diffy))
     if (abs(diffx) > 110):
         move(math.copysign(110, diffx), 0, speed)
-        move(math.copysign(44, diffx), 0, speed)
+        move(math.copysign(45, diffx), 0, speed)
         if abs(diffy) == 26:
             move(0, math.copysign(21, diffy), speed)
         else:
             move(0, diffy, speed)
-        return
+        return counter
     if diffx != 0 or diffy != 0:
         move(diffx, diffy, speed)
+    return counter
 def initMouse(speed):
     move(-82, 23, speed)
 if __name__ == '__main__':
     board = []
-    speed = 0.03
+    speed = 0.02
     trie_node = {}
 
     with open('dict_trie.json') as f:
@@ -125,17 +132,19 @@ if __name__ == '__main__':
     currentPosX = 0
     currentPosY = 0
     initMouse(speed)
+    c = 0
     for word in sorted(words,key=len,reverse=True):
         max_scores[len(word)] += score_map[len(word)]
 
         print('{:10} -> {}'.format(word, words[word]))
         startingPos = words[word][0]
-        moveToOnBoard(startingPos, currentPosX, currentPosY, speed)
+        c = moveToOnBoard(startingPos, currentPosX, currentPosY, speed, c)
         currentPosX = startingPos[0]
         currentPosY = startingPos[1]
         click(1)
         for direct in words[word][1:]:
-            move(*correctMouseCoords(direct), speed)
+            coord,c=correctMouseCoords(direct,c)
+            move(coord[0],coord[1],speed)
             currentPosX += direct[0]
             currentPosY += direct[1]
             if currentPosX < 0 or currentPosY < 0 or currentPosX > 3 or currentPosY > 3:
