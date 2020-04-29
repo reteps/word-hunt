@@ -40,12 +40,12 @@ def get_neighbors(r, c):
         new_c = c + d[1]
         if new_r >= SIZE or new_c >= SIZE or new_r < 0 or new_c < 0:
            continue
-        neighbors.append((new_r, new_c))
+        neighbors.append((new_r, new_c, d[0], d[1]))
     return neighbors
 
 
-def allPossibleWords(board, min_length, trie_dict):
-    combinations = []
+def allPossibleWords(board, min_length, max_length, trie_dict):
+    combinations = {}
 
     def depth_first_search(r, c, visited, trie, current_word, direction):
         if (r, c) in visited:  # Cannot go to this cell again, so return
@@ -54,14 +54,13 @@ def allPossibleWords(board, min_length, trie_dict):
         visited.append((r, c))
         if letter in trie:  # has subnode
             current_word += letter
-            if trie[letter]['valid'] and len(current_word) >= min_length:
-                combinations.append(
-                    {'word': current_word, 'coords': direction})
+            if trie[letter]['valid'] and len(current_word) >= min_length and len(current_word) <= max_length:
+                combinations[current_word] = direction
             for n in get_neighbors(r, c):
                 new_r = n[0]
                 new_c = n[1]
                 depth_first_search(
-                    new_r, new_c, visited[:], trie[letter], current_word, direction + [n])
+                    new_r, new_c, visited[:], trie[letter], current_word, direction + [(n[2], n[3])])
     for r in range(SIZE):
         for c in range(SIZE):
             start = board[r][c]

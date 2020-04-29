@@ -3,13 +3,11 @@
 #define SLAVE_ADDRESS 0x04
 
 void setup() {
-  
   Wire.begin(SLAVE_ADDRESS);
   Wire.onReceive(receiveData);
   Serial.begin(9600);
-  Mouse.screenSize(1920, 1080);
+  Mouse.screenSize(1125, 2436, true);
 }
-
 void loop() {}
 
 void receiveData(int byteCount) {
@@ -27,10 +25,11 @@ void receiveData(int byteCount) {
     }
   }
   if (coords[0] == 1) {
-    Serial.println("Received mouse move instruction.");
-    Mouse.moveTo(coords[0],coords[1]);
+    Mouse.moveTo(coords[1],coords[2]);
   } else if (coords[0] == 2) {
-    Serial.println("Received click instruction.");
-    Mouse.set_buttons(coords[0], 0, coords[1]);
+    Mouse.set_buttons(coords[1], 0, 0);
+  } else if (coords[0] == 3) {
+    Mouse.move(coords[1], coords[2]);
+    
   }
 }
