@@ -1,3 +1,5 @@
+
+import json
 SIZE = 4
 directions = [
     (-1, -1),
@@ -24,7 +26,6 @@ def gen_trie(word, t_node):
 '''
 Converts dictionary into trie structure for easy lookup
 '''
-
 
 def generate_trie(dictionary, trie):
     for word in dictionary:
@@ -66,3 +67,11 @@ def allPossibleWords(board, min_length, trie_dict):
             start = board[r][c]
             depth_first_search(r, c, [], trie_dict, "", [(r, c)])
     return combinations
+if __name__ == '__main__':
+    words = []
+    trie = {}
+    with open('words_alpha.txt') as f:
+       words = f.read().splitlines()
+    trie = generate_trie(words, trie)
+    with open('dict_trie.json','w') as f:
+        f.write(json.dumps(trie))
